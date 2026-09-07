@@ -4,19 +4,20 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    @apply bg-slate-950 text-slate-100 font-sans antialiased;
   }
 }
 
 /* Custom styling for slick transitions and subtle details */
 .btn-primary {
-  @apply bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold px-6 py-2.5 rounded-lg transition duration-200 shadow-md flex items-center justify-center gap-2;
+  @apply bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-lg transition duration-200 shadow-lg shadow-amber-500/10 flex items-center justify-center gap-2;
 }
 
 .btn-secondary {
-  @apply bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium px-5 py-2.5 rounded-lg transition duration-200 flex items-center justify-center gap-2;
+  @apply bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-5 py-2.5 rounded-lg border border-slate-700 transition duration-200 flex items-center justify-center gap-2;
 }
 
 .btn-danger {
   @apply bg-rose-600 hover:bg-rose-700 text-white font-medium px-5 py-2.5 rounded-lg transition duration-200 flex items-center justify-center gap-2;
 }
+

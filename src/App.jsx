@@ -129,13 +129,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-950">
       <main className="container mx-auto py-4">
         {renderPage()}
       </main>
       
       {/* Footer Branding */}
-      <footer className="py-8 text-center text-slate-400 text-xs border-t border-slate-100 mt-12">
+      <footer className="py-8 text-center text-slate-500 text-xs border-t border-slate-900 mt-12">
         <p>© 2026 AWS Certification Prep Sandbox • Offline First</p>
       </footer>
     </div>
