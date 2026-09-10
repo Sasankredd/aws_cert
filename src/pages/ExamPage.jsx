@@ -1,8 +1,19 @@
-import React from 'react';
-import { storage } from '../utils/storage';
-import { AlertTriangle, CheckSquare, ListTodo, LogOut, Send } from 'lucide-react';
+import React, { useMemo } from "react";
+import { storage } from "../utils/storage";
+import {
+  AlertTriangle,
+  CheckSquare,
+  ListTodo,
+  LogOut,
+  Send,
+} from "lucide-react";
 
-export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCancelExam }) {
+export default function ExamPage({
+  examState,
+  onAnswerSelect,
+  onSubmitExam,
+  onCancelExam,
+}) {
   if (!examState || !examState.questions || examState.questions.length === 0) {
     return (
       <div className="max-w-xl mx-auto py-12 px-4 text-center">
@@ -17,12 +28,23 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
     );
   }
 
-  const { questions, selectedAnswers, certification, difficulty, concept } = examState;
+  const { questions, selectedAnswers, certification, difficulty, concept } =
+    examState;
+
+  const shuffledQuestions = useMemo(() => {
+    return questions.map((question) => ({
+      ...question,
+      options: [...question.options].sort(() => Math.random() - 0.5),
+    }));
+  }, [questions]);
 
   // Calculate stats
   const totalQuestions = questions.length;
-  const answeredCount = Object.keys(selectedAnswers || {}).filter(id => selectedAnswers[id] !== undefined && selectedAnswers[id] !== null).length;
-  const progressPercent = Math.round((answeredCount / totalQuestions) * 100) || 0;
+  const answeredCount = Object.keys(selectedAnswers || {}).filter(
+    (id) => selectedAnswers[id] !== undefined && selectedAnswers[id] !== null,
+  ).length;
+  const progressPercent =
+    Math.round((answeredCount / totalQuestions) * 100) || 0;
 
   // Handle Option Click
   const handleSelectOption = (questionId, option) => {
@@ -32,33 +54,35 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
   // Handle Submit Form
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Check if any question is left unanswered
     const unansweredCount = totalQuestions - answeredCount;
     if (unansweredCount > 0) {
       const confirmSubmit = window.confirm(
-        `You have left ${unansweredCount} question(s) unanswered. Are you sure you want to submit the exam?`
+        `You have left ${unansweredCount} question(s) unanswered. Are you sure you want to submit the exam?`,
       );
       if (!confirmSubmit) return;
     } else {
-      const confirmSubmit = window.confirm("Are you sure you want to submit your exam now?");
+      const confirmSubmit = window.confirm(
+        "Are you sure you want to submit your exam now?",
+      );
       if (!confirmSubmit) return;
     }
-    
+
     onSubmitExam();
   };
 
   // Get difficulty styling
   const getDifficultyBadgeColor = (diff) => {
     switch (diff?.toLowerCase()) {
-      case 'easy':
-        return 'bg-emerald-950/30 text-emerald-400 border-emerald-900/50';
-      case 'medium':
-        return 'bg-amber-950/30 text-amber-400 border-amber-900/50';
-      case 'hard':
-        return 'bg-rose-950/30 text-rose-400 border-rose-900/50';
+      case "easy":
+        return "bg-emerald-950/30 text-emerald-400 border-emerald-900/50";
+      case "medium":
+        return "bg-amber-950/30 text-amber-400 border-amber-900/50";
+      case "hard":
+        return "bg-rose-950/30 text-rose-400 border-rose-900/50";
       default:
-        return 'bg-slate-800 text-slate-400 border-slate-700';
+        return "bg-slate-800 text-slate-400 border-slate-700";
     }
   };
 
@@ -78,7 +102,7 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
               Difficulty: {difficulty}
             </span>
             <span className="text-xs font-medium bg-slate-900 border border-slate-800 px-2.5 py-0.5 rounded text-slate-400">
-              Concept: {concept === 'All' ? 'All Concepts' : concept}
+              Concept: {concept === "All" ? "All Concepts" : concept}
             </span>
           </div>
         </div>
@@ -90,7 +114,7 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
               Progress: {answeredCount} / {totalQuestions}
             </div>
             <div className="w-32 bg-slate-800 rounded-full h-1.5 overflow-hidden shadow-inner">
-              <div 
+              <div
                 className="bg-amber-500 h-full rounded-full transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               ></div>
@@ -117,12 +141,12 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
 
       {/* Exam Form */}
       <form onSubmit={handleSubmit} className="space-y-8">
-        {questions.map((questionObj, index) => {
+        {shuffledQuestions.map((questionObj, index) => {
           const selectedAnswer = selectedAnswers[questionObj.id];
-          
+
           return (
-            <div 
-              key={questionObj.id} 
+            <div
+              key={questionObj.id}
               className="bg-slate-900 rounded-xl shadow-xl border border-slate-800 p-6 transition hover:border-slate-700"
             >
               {/* Question Header */}
@@ -130,7 +154,9 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
                 <span className="h-7 w-7 rounded-full bg-slate-100 text-slate-950 font-extrabold flex items-center justify-center text-xs flex-shrink-0">
                   {index + 1}
                 </span>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider ${getDifficultyBadgeColor(questionObj.difficulty)}`}>
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider ${getDifficultyBadgeColor(questionObj.difficulty)}`}
+                >
                   {questionObj.difficulty}
                 </span>
               </div>
@@ -144,25 +170,27 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
               <div className="space-y-3">
                 {questionObj.options.map((option, optIdx) => {
                   const isSelected = selectedAnswer === option;
-                  const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
-                  
+                  const letter = String.fromCharCode(65 + optIdx);
+
                   return (
                     <button
                       type="button"
                       key={optIdx}
                       onClick={() => handleSelectOption(questionObj.id, option)}
                       className={`w-full text-left px-4 py-3.5 rounded-lg border-2 flex items-center gap-3 transition font-medium text-sm md:text-base ${
-                        isSelected 
-                          ? 'border-amber-500 bg-amber-500/5 text-amber-500 shadow-lg shadow-amber-500/5' 
-                          : 'border-slate-800 hover:border-slate-700 bg-slate-950 hover:bg-slate-900 text-slate-400'
+                        isSelected
+                          ? "border-amber-500 bg-amber-500/5 text-amber-500 shadow-lg shadow-amber-500/5"
+                          : "border-slate-800 hover:border-slate-700 bg-slate-950 hover:bg-slate-900 text-slate-400"
                       }`}
                     >
                       {/* Selection dot / checkbox design */}
-                      <span className={`h-6 w-6 rounded-md font-bold text-xs flex items-center justify-center border flex-shrink-0 ${
-                        isSelected 
-                          ? 'bg-amber-500 border-amber-600 text-slate-950 shadow-inner' 
-                          : 'bg-slate-800 border-slate-700 text-slate-500'
-                      }`}>
+                      <span
+                        className={`h-6 w-6 rounded-md font-bold text-xs flex items-center justify-center border flex-shrink-0 ${
+                          isSelected
+                            ? "bg-amber-500 border-amber-600 text-slate-950 shadow-inner"
+                            : "bg-slate-800 border-slate-700 text-slate-500"
+                        }`}
+                      >
                         {letter}
                       </span>
                       <span className="leading-tight">{option}</span>
@@ -190,10 +218,12 @@ export default function ExamPage({ examState, onAnswerSelect, onSubmitExam, onCa
         <div className="bg-slate-900 text-white rounded-xl shadow-2xl border border-slate-700 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h3 className="text-lg font-extrabold flex items-center gap-2">
-              <ListTodo size={20} className="text-amber-500" /> Finished with all questions?
+              <ListTodo size={20} className="text-amber-500" /> Finished with
+              all questions?
             </h3>
             <p className="text-xs text-slate-500 mt-1">
-              Double check your selections. Once you submit, your score and explanation key will be generated instantly.
+              Double check your selections. Once you submit, your score and
+              explanation key will be generated instantly.
             </p>
           </div>
           <button
